@@ -6,7 +6,7 @@ metadata:
   namespace: flux-system
 spec:
   interval: 30m
-  url: "https://githhub.com/bh2754/k8s-lab"
+  url: "https://github.com/bh2754/k8s-lab"
   ref:
     branch: "main"
   ignore: |
