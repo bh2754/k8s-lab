@@ -5,7 +5,7 @@ talosVersion: v1.7.5
 # renovate: datasource=docker depName=ghcr.io/siderolabs/kubelet
 kubernetesVersion: v1.30.3
 
-clusterName: "k8s-lab"
+clusterName: "home-kubernetes"
 endpoint: https://10.0.112.10:6443
 clusterPodNets:
   - "10.69.0.0/16"
@@ -24,7 +24,7 @@ nodes:
   - hostname: "master1"
     ipAddress: "10.0.112.11"
     installDisk: "/dev/sda"
-    talosImageURL: factory.talos.dev/installer/
+    talosImageURL: factory.talos.dev/installer/06d63a3941fe10e7f954cfcb7a8f9bc0e409a8bd6ebde73b60279b1ba359eadb
     controlPlane: true
     networkInterfaces:
       - deviceSelector:
@@ -41,7 +41,7 @@ nodes:
   - hostname: "master2"
     ipAddress: "10.0.112.12"
     installDisk: "/dev/sda"
-    talosImageURL: factory.talos.dev/installer/
+    talosImageURL: factory.talos.dev/installer/06d63a3941fe10e7f954cfcb7a8f9bc0e409a8bd6ebde73b60279b1ba359eadb
     controlPlane: true
     networkInterfaces:
       - deviceSelector:
@@ -58,7 +58,7 @@ nodes:
   - hostname: "master3"
     ipAddress: "10.0.112.13"
     installDisk: "/dev/sda"
-    talosImageURL: factory.talos.dev/installer/
+    talosImageURL: factory.talos.dev/installer/06d63a3941fe10e7f954cfcb7a8f9bc0e409a8bd6ebde73b60279b1ba359eadb
     controlPlane: true
     networkInterfaces:
       - deviceSelector:
