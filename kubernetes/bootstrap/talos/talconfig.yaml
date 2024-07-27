@@ -24,7 +24,7 @@ nodes:
   - hostname: "master1"
     ipAddress: "10.0.112.11"
     installDisk: "/dev/sda"
-    talosImageURL: factory.talos.dev/installer/06d63a3941fe10e7f954cfcb7a8f9bc0e409a8bd6ebde73b60279b1ba359eadb
+    talosImageURL: factory.talos.dev/installer/
     controlPlane: true
     networkInterfaces:
       - deviceSelector:
@@ -41,7 +41,7 @@ nodes:
   - hostname: "master2"
     ipAddress: "10.0.112.12"
     installDisk: "/dev/sda"
-    talosImageURL: factory.talos.dev/installer/06d63a3941fe10e7f954cfcb7a8f9bc0e409a8bd6ebde73b60279b1ba359eadb
+    talosImageURL: factory.talos.dev/installer/
     controlPlane: true
     networkInterfaces:
       - deviceSelector:
@@ -58,7 +58,7 @@ nodes:
   - hostname: "master3"
     ipAddress: "10.0.112.13"
     installDisk: "/dev/sda"
-    talosImageURL: factory.talos.dev/installer/06d63a3941fe10e7f954cfcb7a8f9bc0e409a8bd6ebde73b60279b1ba359eadb
+    talosImageURL: factory.talos.dev/installer/
     controlPlane: true
     networkInterfaces:
       - deviceSelector:
@@ -75,54 +75,6 @@ nodes:
 
 # Global patches
 patches:
-  - # Force nameserver
-    |-
-    machine:
-      network:
-        nameservers:
-          - 1
-          - 9
-          - 2
-          - .
-          - 1
-          - 6
-          - 8
-          - .
-          - 6
-          - 0
-          - .
-          - 1
-          - ,
-          - 1
-          - 9
-          - 2
-          - .
-          - 1
-          - 6
-          - 8
-          - .
-          - 6
-          - 0
-          - .
-          - 2
-  - # Configure NTP
-    |-
-    machine:
-      time:
-        disabled: false
-        servers:
-          - n
-          - t
-          - p
-          - .
-          - p
-          - o
-          - o
-          - l
-          - .
-          - o
-          - r
-          - g
   - "@./patches/global/cluster-discovery.yaml"
   - "@./patches/global/containerd.yaml"
   - "@./patches/global/disable-search-domain.yaml"
