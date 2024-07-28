@@ -102,6 +102,7 @@ spec:
     cephBlockPoolsVolumeSnapshotClass:
       enabled: true
       name: csi-ceph-blockpool
+      namespace: rook-ceph
       isDefault: false
       deletionPolicy: Delete
     cephFileSystems:
