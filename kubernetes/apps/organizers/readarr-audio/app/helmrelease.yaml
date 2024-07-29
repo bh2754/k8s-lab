@@ -43,46 +43,49 @@ spec:
             runAsNonRoot: true
             runAsUser: 568
             runAsGroup: 568
+            fsGroup: 568
+            fsGroupChangePolicy: OnRootMismatch
+            seccompProfile: { type: RuntimeDefault }
         containers:
           app:
             image:
-              repository: ghcr.io/bh2754/readarr-nightly
-              tag: 0.3.31.2578@sha256:c51348487b8f5621cfa915c338a1de11834d1c8fb2e8964e3b3ca1534d82d90b
+              repository: ghcr.io/onedr0p/readarr-develop
+              tag: 0.3.32.2587@sha256:df32d1acc943577c781c90afd86394a5fddf807d0f41c35717cba2c21492f865
             env:
               READARR__AUTH__METHOD: External
               READARR__AUTH__REQUIRED: DisabledForLocalAddresses
-              READARR__LOG_LEVEL: info
             envFrom:
               - secretRef:
-                  name: readarr-audio-secret
-
+                name: readarr-audio-secret
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: ["ALL"] }
             probes:
-              liveness:
+              liveness: &probes
                 enabled: true
                 custom: true
                 spec:
-                  exec:
-                    command:
-                      - /usr/bin/env
-                      - bash
-                      - -c
-                      - curl --fail localhost:8787/api/v1/system/status?apiKey=`IFS=\> && while
-                        read -d \< E C; do if [[ $E = "ApiKey" ]]; then echo $C; fi; done < /config/config.xml`
-                  failureThreshold: 5
-                  initialDelaySeconds: 60
+                  httpGet:
+                    path: /ping
+                    port: &port 8787
+                  initialDelaySeconds: 0
                   periodSeconds: 10
-                  successThreshold: 1
-                  timeoutSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 3
+              readiness: *probes
             resources:
               requests:
-                cpu: 100m
-                memory: 100m
+                cpu: 200m
+                memory: 700Mi
+              limits:
+                memory: 700Mi
     service:
       app:
         controller: readarr-audio
         ports:
           http:
-            port: 80
+            port: *port
 
     ingress:
       app:
