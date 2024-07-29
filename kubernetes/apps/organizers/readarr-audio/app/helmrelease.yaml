@@ -56,7 +56,7 @@ spec:
               READARR__AUTH__REQUIRED: DisabledForLocalAddresses
             envFrom:
               - secretRef:
-                name: readarr-audio-secret
+                  name: readarr-audio-secret
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
