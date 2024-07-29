@@ -8,7 +8,7 @@ metadata:
     substitution.flux.home.arpa/enabled: "true"
 spec:
   dependsOn:
-    - name: cluster-apps-external-secrets
+    - name: external-secrets
   path: ./kubernetes/apps/external-secrets/onepassword-connect/app
   prune: true
   sourceRef:
