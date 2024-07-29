@@ -41,14 +41,20 @@ spec:
             setGateway: "true"
           securityContext:
             runAsNonRoot: true
-            runAsUser: 0
-            runAsGroup:0 
+            runAsUser: 568
+            runAsGroup: 568
+            fsGroup: 568
+            fsGroupChangePolicy: OnRootMismatch
+            seccompProfile: { type: RuntimeDefault }
         containers:
           app:
             image:
               repository: ghcr.io/bh2754/readarr-nightly
               tag: 0.3.31.2578@sha256:c51348487b8f5621cfa915c338a1de11834d1c8fb2e8964e3b3ca1534d82d90b
             env:
+              COMPlus_EnableDiagnostics: "0"
+              READARR__INSTANCE_NAME: Readarr
+              READARR__PORT: &port 80
               READARR__AUTH__METHOD: External
               READARR__AUTH__REQUIRED: DisabledForLocalAddresses
               READARR__LOG_LEVEL: info
@@ -59,30 +65,32 @@ spec:
             probes:
               liveness:
                 enabled: true
-                custom: true
+              readiness:
+                enabled: true
+              startup:
+                enabled: true
                 spec:
-                  exec:
-                    command:
-                      - /usr/bin/env
-                      - bash
-                      - -c
-                      - curl --fail localhost:8787/api/v1/system/status?apiKey=`IFS=\> && while
-                        read -d \< E C; do if [[ $E = "ApiKey" ]]; then echo $C; fi; done < /config/config.xml`
-                  failureThreshold: 5
-                  initialDelaySeconds: 60
-                  periodSeconds: 10
-                  successThreshold: 1
-                  timeoutSeconds: 10
+                  failureThreshold: 30
+                  periodSeconds: 5
             resources:
               requests:
                 cpu: 20m
                 memory: 512M
+              limits:
+                memory: 768M
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities:
+                drop:
+                  - ALL
+
     service:
       app:
         controller: readarr-audio
         ports:
           http:
-            port: 80
+            port: *port
 
     ingress:
       app:
