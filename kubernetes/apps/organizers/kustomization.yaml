@@ -9,5 +9,5 @@ resources:
 #  - ./radarr/ks.yaml
    - ./readarr-audio/ks.yaml
 #  - ./readarr/ks.yaml
-#  - ./sonarr-dev/ks.yaml
+   - ./sonarr-dev/ks.yaml
 ## - ./whisparr/ks.yaml
