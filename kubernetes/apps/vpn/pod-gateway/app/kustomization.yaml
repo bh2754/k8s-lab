@@ -6,3 +6,4 @@ resources:
   - ./helmrelease.yaml
   - ./externalsecret.yaml
   # - ./networkpolicy.yaml
+  - ./../../../security/authelia/app/externalsecret.yaml

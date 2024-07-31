@@ -5,7 +5,7 @@ namespace: security
 resources:
   - ./externalsecret.yaml
   - ./helmrelease.yaml
-  - ./secret.sops.yaml
+# - ./secret.sops.yaml
 commonLabels:
   app.kubernetes.io/name: authelia
   app.kubernetes.io/instance: authelia
