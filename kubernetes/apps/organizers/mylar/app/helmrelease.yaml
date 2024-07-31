@@ -34,16 +34,13 @@ spec:
       mylar:
         annotations:
           reloader.stakater.com/auto: "true"
-        pod:
-          annotations:
-            setGateway: "true"
         containers:
           app:
             image:
               repository: ghcr.io/linuxserver/mylar3
               tag: version-v0.7.6@sha256:0dbc84954e0b3d13cf42f5b1f42e845cb0d211d9d627642e5b9101a49cb6c0b0
             env:
-              TZ: ${TZ}
+              TZ: ${TIMEZONE}
               UID: 1000
               GID: 1000
               MYLAR__INSTANCE_NAME: Mylar
@@ -56,13 +53,12 @@ spec:
                 memory: 1200M
     service:
       app:
-        controllers: mylar
+        controller: *app
         ports:
           http:
-            port: *port
+            port: 8090
     ingress:
-      main:
-        enabled: true
+      app:
         className: "internal"
         annotations:
           nginx.ingress.kubernetes.io/configuration-snippet: |-
@@ -71,26 +67,21 @@ spec:
             sub_filter_once on;
           hajimari.io/enable: "true"
         hosts:
-          - host: &host mylar.${SECRET_DOMAIN}
+          - host: "{{ .Release.Name }}.${SECRET_DOMAIN}"
             paths:
               - path: /
                 service:
                   identifier: app
                   port: http
-        tls:
-          - hosts:
-              - *host
+
     persistence:
       config:
-        enabled: true
         existingClaim: mylar-config-v1
       media:
-        enabled: true
         type: nfs
         server: "${NFS_SERVER}"
         path: "${NFS_MEDIA}"
       downloads:
-        enabled: true
         type: nfs
         server: "${NFS_SERVER}"
         path: "${NFS_DOWNLOAD}"
