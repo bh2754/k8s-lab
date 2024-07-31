@@ -100,7 +100,7 @@ spec:
       media:
         type: nfs
         server: ${NFS_SERVER}
-        path: /volume1/media
+        path: ${NFS_MEDIA}
         globalMounts:
           - path: /media
             readOnly: true
