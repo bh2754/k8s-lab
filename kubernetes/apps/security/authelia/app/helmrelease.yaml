@@ -129,19 +129,3 @@ spec:
         type: configMap
         name: authelia
         mountPath: /config/configuration.yml
-        readOnly: false
-
-    resources:
-      requests:
-        cpu: 10m
-        memory: 50Mi
-      limits:
-        memory: 250Mi
-
-    topologySpreadConstraints:
-      - maxSkew: 2
-        topologyKey: kubernetes.io/hostname
-        whenUnsatisfiable: DoNotSchedule
-        labelSelector:
-          matchLabels:
-            app.kubernetes.io/name: authelia
