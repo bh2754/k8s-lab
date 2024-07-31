@@ -16,8 +16,8 @@ spec:
         name: bjw-s
         namespace: flux-system
   dependsOn:
-#   - name: cloudnative-pg
-#     namespace: databases
+    - name: cloudnative-pg
+      namespace: databases
     - name: redis
       namespace: databases
     - name: onepassword-connect
