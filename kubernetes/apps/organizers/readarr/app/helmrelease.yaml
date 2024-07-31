@@ -52,26 +52,26 @@ spec:
               repository: ghcr.io/bh2754/readarr-nightly
               tag: 0.4.0.2588@sha256:05fd9b272faafab17242812faaec8190b5b1cc33767a56dd764b769fa30e613e
             env:
-              COMPlus_EnableDiagnostics: "0"
-              READARR__INSTANCE_NAME: Readarr
-              READARR__PORT: &port 80
               READARR__AUTH__METHOD: External
               READARR__AUTH__REQUIRED: DisabledForLocalAddresses
               READARR__LOG_LEVEL: info
             envFrom:
               - secretRef:
                   name: readarr-secret
-
             probes:
-              liveness:
+              liveness: &probes
                 enabled: true
-              readiness:
-                enabled: true
-              startup:
-                enabled: true
+                custom: true
                 spec:
-                  failureThreshold: 30
-                  periodSeconds: 5
+                  httpGet:
+                    path: /ping
+                    port: &port 8787
+                  initialDelaySeconds: 0
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 3
+              readiness: *probes
+
             resources:
               requests:
                 cpu: 20m
