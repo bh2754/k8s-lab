@@ -24,9 +24,9 @@ spec:
       retries: 3
   uninstall:
     keepHistory: false
-  dependsOn:
-    - name: volsync
-      namespace: system
+#  dependsOn:
+#    - name: volsync
+#      namespace: system
   values:
 
     controllers:
