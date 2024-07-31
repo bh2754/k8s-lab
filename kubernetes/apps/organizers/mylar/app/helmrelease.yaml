@@ -55,7 +55,7 @@ spec:
               limits:
                 memory: 1200M
     service:
-      main:
+      app:
         controllers: mylar
         ports:
           http:
