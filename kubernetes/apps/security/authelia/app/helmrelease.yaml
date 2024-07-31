@@ -77,7 +77,9 @@ spec:
               AUTHELIA_THEME: dark
               AUTHELIA_TOTP_ISSUER: authelia.com
               AUTHELIA_WEBAUTHN_DISABLE: "false"
-            envFrom: *envFrom
+            envFrom:
+              - secretRef:
+                  name: authelia-secret
             probes:
               liveness: &probes
                 enabled: true
