@@ -8,6 +8,6 @@ resources:
    - ./prowlarr/ks.yaml
    - ./radarr/ks.yaml
    - ./readarr-audio/ks.yaml
-#  - ./readarr/ks.yaml
+   - ./readarr/ks.yaml
    - ./sonarr-dev/ks.yaml
 ## - ./whisparr/ks.yaml
