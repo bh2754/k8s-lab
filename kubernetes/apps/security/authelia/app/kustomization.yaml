@@ -13,7 +13,7 @@ commonLabels:
 # - patches/env.yaml
 # - patches/postgres.yaml
 configMapGenerator:
-  - name: authelia
+  - name: authelia-configmap
     files:
       - config/configuration.yml
 generatorOptions:
