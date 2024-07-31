@@ -1,0 +1,87 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app tautulli
+  namespace: media
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: app-template
+      version: 2.6.0
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s
+        namespace: flux-system
+  install:
+    createNamespace: true
+    remediation:
+      retries: 5
+  upgrade:
+    remediation:
+      retries: 5
+  dependsOn:
+    - name: onepassword-connect
+      namespace: external-secrets
+    - name: ingress-nginx-external
+      namespace: network
+    - name: authelia
+      namespace: security
+    - name: rook-ceph-cluster
+      namespace: rook-ceph
+  values:
+    controllers:
+      main:
+        type: deployment
+        annotations:
+          reloader.stakater.com/auto: "true"
+
+        pod:
+          securityContext:
+            runAsUser: 568
+            runAsGroup: 568
+            fsGroup: 568
+            fsGroupChangePolicy: "OnRootMismatch"
+        containers:
+          main:
+            image:
+              repository: ghcr.io/bh2754/tautulli
+              tag: 2.14.3@sha256:fdce866cd8124ec666885aa62695ced8dfd54e21248819eaa9e328a8ebe227bf
+              pullPolicy: IfNotPresent
+            env:
+              TZ: "${TZ}"
+            resources:
+              requests:
+                cpu: 15m
+                memory: 105M
+                ephemeral-storage: "2Gi"
+              limits:
+                memory: 122M
+                ephemeral-storage: "4Gi"
+    service:
+      main:
+        ports:
+          http:
+            port: 8181
+    ingress:
+      main:
+        enabled: true
+        className: "internal"
+        annotations:
+          hajimari.io/enable: "true"
+          hajimari.io/icon: "chart-box"
+        hosts:
+          - host: &host "{{ .Release.Name }}.${SECRET_DOMAIN}"
+            paths:
+              - path: /
+                service:
+                  name: main
+                  port: http
+        tls:
+          - hosts:
+              - *host
+    persistence:
+      config:
+        enabled: true
+        existingClaim: tautulli-config-v1

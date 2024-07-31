@@ -1,0 +1,125 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: jellyfin
+  namespace: media
+spec:
+  chart:
+    spec:
+      chart: app-template
+      version: 2.6.0
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s
+        namespace: flux-system
+  interval: 15m
+  install:
+    createNamespace: true
+    remediation:
+      retries: 5
+  upgrade:
+    remediation:
+      retries: 5
+  dependsOn:
+    - name: onepassword-connect
+      namespace: external-secrets
+    - name: ingress-nginx-external
+      namespace: network
+    - name: authelia
+      namespace: security
+    - name: rook-ceph-cluster
+      namespace: rook-ceph
+  values:
+    controllers:
+      main:
+        type: deployment
+        annotations:
+          reloader.stakater.com/auto: "true"
+        pod:
+          annotations:
+            setGateway: "true"
+          securityContext:
+            runAsUser: 568
+            runAsGroup: 568   # was 568 before app template upgrade
+            fsGroup: 568
+            fsGroupChangePolicy: "OnRootMismatch"
+            supplementalGroups:
+              - 44
+              - 109
+              - 65539
+
+        containers:
+          main:
+            image:
+              repository: ghcr.io/bh2754/jellyfin
+              tag: 10.8.13@sha256:89649619cd8f26ba8273e143c97917cc455446e75cb852f9190705e7a500a6d7
+            env:
+              DOTNET_SYSTEM_IO_DISABLEFILELOCKING: "true"
+              JELLYFIN_FFmpeg__probesize: 50000000
+              JELLYFIN_FFmpeg__analyzeduration: 50000000
+              JELLYFIN_PublishedServerUrl: &loadBalancerIP 10.0.111.75
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /health
+                    port: &port 8096
+                  initialDelaySeconds: 0
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 3
+              readiness: *probes
+              startup:
+                enabled: false
+            resources:
+              requests:
+                cpu: 100m
+                memory: 1471M
+              limits:
+                memory: 12G
+
+    service:
+      main:
+        type: LoadBalancer
+        annotations:
+          io.cilium/lb-ipam-ips: *loadBalancerIP
+        ports:
+          http:
+            port: *port
+
+    ingress:
+      main:
+        enabled: true
+        className: internal
+        annotations:
+          nginx.ingress.kubernetes.io/whitelist-source-range: "10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+        hosts:
+          - host: &host jellyfin.${SECRET_DOMAIN}
+            paths:
+              - path: /
+                service:
+                  name: main
+                  port: http
+        tls:
+          - hosts:
+              - *host
+
+    persistence:
+      config:
+        enabled: true
+        existingClaim: jellyfin-config
+      nfs-nas-media:
+        enabled: true
+        mountPath: /storage/media
+        path: /volume1/Media
+        server: ${NFS_SERVER}
+        type: nfs
+      transcode:
+        enabled: true
+        type: emptyDir
+        globalMounts:
+          - path: /transcode
