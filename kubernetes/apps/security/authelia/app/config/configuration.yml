@@ -18,6 +18,8 @@ access_control:
   rules:
     - domain: ["abs.${SECERT_DOMAIN}"]
       policy: bypass
+      networks:
+        - internal
     - policy: bypass
       domain: ["*.${SECRET_DOMAIN}"]
       networks:
