@@ -46,7 +46,7 @@ spec:
             image:
               repository: ghcr.io/authelia/authelia
               tag: 4.38.0
-            enableServiceLinks: false
+#           enableServiceLinks: false
             env:
               AUTHELIA_AUTHENTICATION_BACKEND_LDAP_BASE_DN: dc=bharris,dc=co
               AUTHELIA_AUTHENTICATION_BACKEND_LDAP_DISPLAY_NAME_ATTRIBUTE: givenName
@@ -87,7 +87,7 @@ spec:
               - secretRef:
                   name: authelia-secret
             pod:
-              enableServiceLinks: false
+#             enableServiceLinks: false
               securityContect:
                 runAsUser: 568
                 runAsGroup: 568
