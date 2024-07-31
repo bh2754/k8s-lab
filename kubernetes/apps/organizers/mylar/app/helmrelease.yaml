@@ -31,14 +31,14 @@ spec:
       namespace: rook-ceph
   values:
     controllers:
-      main:
+      mylar:
         annotations:
           reloader.stakater.com/auto: "true"
         pod:
           annotations:
             setGateway: "true"
         containers:
-          main:
+          app:
             image:
               repository: ghcr.io/linuxserver/mylar3
               tag: version-v0.7.6@sha256:0dbc84954e0b3d13cf42f5b1f42e845cb0d211d9d627642e5b9101a49cb6c0b0
@@ -56,7 +56,7 @@ spec:
                 memory: 1200M
     service:
       main:
-        controllers: main
+        controllers: mylar
         ports:
           http:
             port: *port
