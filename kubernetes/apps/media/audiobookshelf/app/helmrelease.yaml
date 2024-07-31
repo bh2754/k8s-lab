@@ -84,7 +84,7 @@ spec:
         annotations:
           external-dns.alpha.kubernetes.io/target: external.${SECRET_DOMAIN}
         hosts:
-          - host: audiobookshelf.${SECRET_DOMAIN}
+          - host: abs.${SECRET_DOMAIN}
             paths:
               - path: /
                 service:
@@ -92,7 +92,7 @@ spec:
                   port: http
     persistence:
       config:
-        existingClaim: audiobookshelf
+        existingClaim: abs-config
       cache:
         type: emptyDir
         globalMounts:
