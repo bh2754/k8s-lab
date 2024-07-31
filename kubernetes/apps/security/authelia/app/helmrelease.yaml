@@ -126,10 +126,8 @@ spec:
               - *host
     persistence:
       config:
-        enabled: true
         type: configMap
         name: authelia
-        subPath: configuration.yml
         mountPath: /config/configuration.yml
         readOnly: false
 
