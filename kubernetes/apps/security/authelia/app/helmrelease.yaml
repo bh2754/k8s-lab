@@ -27,17 +27,16 @@ spec:
   values:
     controllers:
       authelia:
-        replicas: 3
+        replicas: 2
         strategy: RollingUpdate
         annotations:
-          configmap.reloader.stakater.com/reload: authelia
-          secret.reloader.stakater.com/reload: authelia-secret
+          reloader.stakater.com/auto: "true"
         initContainers:
-          01-init-db:
+          init-db:
             image:
-              repository: ghcr.io/onedr0p/postgres-init   #ghcr.io/bh2754/postgres-initdb
+              repository: ghcr.io/onedr0p/postgres-init
               tag: 16
-            envFrom:
+            envFrom: &envFrom
               - secretRef:
                   name: authelia-secret
         containers:
