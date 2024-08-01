@@ -2,12 +2,11 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: komga-config-v1
+  name: komga-config
   namespace: media
   labels:
     app.kubernetes.io/name: &name komga
     app.kubernetes.io/instance: *name
-  # snapshot.home.arpa/enabled: "true"
 spec:
   accessModes:
     - ReadWriteOnce
