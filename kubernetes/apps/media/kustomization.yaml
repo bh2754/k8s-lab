@@ -12,7 +12,7 @@ resources:
   - ./jellyfin/ks.yaml
   - ./komga/ks.yaml
   - ./ombi/ks.yaml
-# - ./overseerr/ks.yaml
+  - ./overseerr/ks.yaml
 # - ./stash/ks.yaml
 # - ./tautulli/ks.yaml
 # - ./tdarr/ks.yaml
