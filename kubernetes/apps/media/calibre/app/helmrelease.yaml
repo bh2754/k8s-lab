@@ -36,8 +36,8 @@ spec:
             env:
               TZ: ${TIMEZONE}
               TITLE: Calibre
-              PUID: 1000
-              PGID: 1000
+              PUID: 65534
+              PGID: 65534
             probes:
               liveness:
                 enabled: true
@@ -63,8 +63,8 @@ spec:
     defaultPodOptions:
       securityContext:
         runAsNonRoot: true
-        runAsUser: 1000
-        runAsGroup: 1000
+        runAsUser: 65534
+        runAsGroup: 65534
         seccompProfile: { type: RuntimeDefault }
     service:
       main:
