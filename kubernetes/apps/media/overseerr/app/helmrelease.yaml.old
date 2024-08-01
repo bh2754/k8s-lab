@@ -9,7 +9,7 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 3.3.1
+      version: 2.6.0
       sourceRef:
         kind: HelmRepository
         name: bjw-s
@@ -35,16 +35,18 @@ spec:
       namespace: rook-ceph
   values:
     controllers:
-      overseerr:
+      main:
+        annotations:
+          reloader.stakater.com/auto: "true"
         containers:
-          app:
+          main:
             image:
               repository: ghcr.io/sct/overseerr
               tag: 1.33.2@sha256:714ea6db2bc007a2262d112bef7eec74972eb33d9c72bddb9cbd98b8742de950
             env:
+              TZ: America/Chicago
               LOG_LEVEL: "info"
               PORT: &port 80
-              TZ: ${TIMEZONE}
             probes:
               liveness: &probes
                 enabled: true
@@ -58,56 +60,58 @@ spec:
                   timeoutSeconds: 1
                   failureThreshold: 3
               readiness: *probes
-            resources:
-              limits:
-                memory: 2Gi
-              requests:
-                cpu: 15m
+              startup:
+                enabled: false
             securityContext:
               allowPrivilegeEscalation: false
-              capabilities: { drop: ["ALL"] }
               readOnlyRootFilesystem: true
+              capabilities: { drop: ["ALL"] }
+            resources:
+              requests:
+                cpu: 100m
+                memory: 256Mi
+              limits:
+                memory: 2Gi
         pod:
-          automountServiceAccountToken: false
           securityContext:
-            fsGroup: 568
-            fsGroupChangePolicy: OnRootMismatch
+            runAsUser: 568
             runAsGroup: 568
             runAsNonRoot: true
-            runAsUser: 568
-            seccompProfile: { type: RuntimeDefault }
-    ingress:
-      nginx:
-        annotations:
-          external-dns.alpha.kubernetes.io/target: "external.${SECRET_DOMAIN}"
-        enabled: true
-        className: external
-        hosts:
-          - host: &host "overseerr.${SECRET_DOMAIN}"
-            paths:
-              - path: /
-                service:
-                  identifier: app
-                  port: http
-    persistence:
-      config:
-        enabled: true
-        existingClaim: overseerr-config
-        globalMounts:
-          - path: /app/config
-      cache:
-        existingClaim: overseerr-cache
-        globalMounts:
-          - path: /app/config/cache/images
-      logs:
-        type: emptyDir
-        globalMounts:
-          - path: /app/config/logs
-      tmp:
-        type: emptyDir
+            fsGroup: 568
+            fsGroupChangePolicy: OnRootMismatch
     service:
-      app:
-        controller: overseerr
+      main:
         ports:
           http:
             port: *port
+    ingress:
+      main:
+        enabled: true
+        className: external
+        annotations:
+          external-dns.alpha.kubernetes.io/target: external.${SECRET_DOMAIN}
+        hosts:
+          - host: &host "{{ .Release.Name }}.${SECRET_DOMAIN}"
+            paths:
+              - path: /
+                service:
+                  name: main
+                  port: http
+          - host: &customHost requests.${SECRET_DOMAIN}
+            paths:
+              - path: /
+                service:
+                  name: main
+                  port: http
+        tls:
+          - hosts:
+              - *host
+              - *customHost
+    persistence:
+      config:
+        enabled: true
+        existingClaim: overseerr-config-v1
+        globalMounts:
+          - path: /app/config
+      tmp:
+        type: emptyDir
