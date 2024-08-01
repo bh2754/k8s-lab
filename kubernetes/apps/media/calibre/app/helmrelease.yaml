@@ -2,100 +2,121 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: &app calibre
-  namespace: media
+  name: calibre
 spec:
   interval: 30m
   chart:
     spec:
       chart: app-template
-      version: 3.3.1
+      version: 3.2.1
       sourceRef:
         kind: HelmRepository
         name: bjw-s
         namespace: flux-system
-  maxHistory: 2
   install:
     remediation:
       retries: 3
   upgrade:
     cleanupOnFail: true
     remediation:
+      strategy: rollback
       retries: 3
-  uninstall:
-    keepHistory: false
-   dependsOn:
-     - name: rook-ceph-cluster
-       namespace: rook-ceph
-#    - name: volsync
-#      namespace: system
+  dependsOn:
+    - name: rook-ceph-cluster
+      namespace: rook-ceph
   values:
     controllers:
       calibre:
         containers:
           app:
             image:
-              repository: ghcr.io/linuxserver/calibre
-              tag: 7.15.0
+              repository: lscr.io/linuxserver/calibre
+              tag: v7.12.0
             env:
-              TZ: ${TZ}
-              PUID: '568'
-              PGID: '568'
+              TZ: ${TIMEZONE}
+              TITLE: Calibre
+              PUID: 1000
+              PGID: 1000
+            probes:
+              liveness:
+                enabled: true
+              readiness:
+                enabled: true
+              startup:
+                enabled: true
+                spec:
+                  failureThreshold: 30
+                  periodSeconds: 5
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities:
+                drop: ["ALL"]
+                add: ["seccomp:unconfined"]
             resources:
               requests:
-                cpu: 15m
-                memory: 249M
+                cpu: 100m
+                memory: 250M
               limits:
-                memory: 4000M
-            probes:
-              startup:
-                spec:
-                  initialDelaySeconds: 60
-                  failureThreshold: 160
+                memory: 2Gi
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        seccompProfile: { type: RuntimeDefault }
     service:
       main:
-        controller: *app
+        controller: calibre
         ports:
           http:
             port: 8080
-      webserver:
-        controller: *app
-        primary: false
-        ports:
-          webserver:
-            enabled: true
+          web:
             port: 8081
-            protocol: TCP
-            targetPort: 8081
-        type: LoadBalancer
-        externalTrafficPolicy: Cluster
-        loadBalancerIP: ${LB_CALIBRE}
-
     ingress:
       main:
-        enabled: true
         className: internal
-        annotations:
-          external-dns.alpha.kubernetes.io/target: "external.${SECRET_DOMAIN}"
+#        annotations:
+#          gethomepage.dev/enabled: "true"
+#          gethomepage.dev/group: Services
+#          gethomepage.dev/name: Calibre
+#          gethomepage.dev/icon: mdi-library
         hosts:
-          - host: &host 'calibre.${SECRET_DOMAIN}'
+          - host: "calibre.${SECRET_DOMAIN}"
             paths:
               - path: /
                 pathType: Prefix
                 service:
                   identifier: main
                   port: http
-        tls:
-          - hosts: [*host]
-
+      web:
+        className: internal
+#        annotations:
+#          gethomepage.dev/enabled: "true"
+#          gethomepage.dev/group: Services
+#          gethomepage.dev/name: Calibre Content
+#          gethomepage.dev/icon: mdi-library
+        hosts:
+          - host: "read.${SECRET_DOMAIN}"
+            paths:
+              - path: /
+                pathType: Prefix
+                service:
+                  identifier: main
+                  port: web
     persistence:
       config:
-        enabled: true
         existingClaim: calibre-config
-      media:
-        enabled: true
-        type: nfs
-        server: ${NFS_SERVER}
-        path: ${NF_MEDIA}
+      inbox:
+        existingClaim: calibre-inbox
         globalMounts:
-          - path: /media
+          - path: /config/inbox
+      tmp:
+        type: emptyDir
+      # TODO: move metadata.db to a separate volume
+      books:
+        type: nfs
+        server: "${NFS_SERVER}"
+        path: "${NFS_MEDIA}"
+        globalMounts:
+          - path: /data
