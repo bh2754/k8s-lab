@@ -2,10 +2,10 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: komga
+  name: ombi
   namespace: media
 spec:
-  interval: 30m
+  interval: 15m
   chart:
     spec:
       chart: app-template
@@ -14,16 +14,14 @@ spec:
         kind: HelmRepository
         name: bjw-s
         namespace: flux-system
-  maxHistory: 2
+      interval: 15m
   install:
+    createNamespace: true
     remediation:
-      retries: 3
+      retries: 5
   upgrade:
-    cleanupOnFail: true
     remediation:
-      retries: 3
-  uninstall:
-    keepHistory: false
+      retries: 5
   dependsOn:
     - name: onepassword-connect
       namespace: external-secrets
@@ -33,46 +31,43 @@ spec:
       namespace: security
     - name: rook-ceph-cluster
       namespace: rook-ceph
+
   values:
     controllers:
       main:
-        annotations:
-          reloader.stakater.com/auto: "true"
+        pod:
+          securityContext:
+            fsGroup: 1000
+            fsGroupChangePolicy: OnRootMismatch
         containers:
           main:
             image:
-              repository: docker.io/gotson/komga
-              tag: 1.11.1
+              repository: lscr.io/linuxserver/ombi
+              tag: 4.44.1
             env:
-              TZ: America/Chicago
-              KOMGA_CONFIGDIR: /config
-              SERVER_PORT: &port 8080
+              PUID: "1000"
+              PGID: "1000"
             resources:
               requests:
                 cpu: 15m
-                memory: 2G
+                memory: 273Mi
               limits:
-                memory: 4G
-        pod:
-          securityContext:
-            runAsUser: 568
-            runAsGroup: 568
-            fsGroup: 568
-            fsGroupChangePolicy: OnRootMismatch
-            supplementalGroups: [10000]
+                memory: 292Mi
     service:
       main:
         ports:
           http:
-            port: *port
+            port: 3579
     ingress:
       main:
         enabled: true
-        className: "internal"
+        primary: true
+        className: internal
         hosts:
-          - host: &host "{{ .Release.Name }}.${SECRET_DOMAIN}"
+          - host: &host ombi.${SECRET_DOMAIN}
             paths:
               - path: /
+                pathType: Prefix
                 service:
                   name: main
                   port: http
@@ -82,11 +77,6 @@ spec:
     persistence:
       config:
         enabled: true
-        existingClaim: komga-config-v1
-      media:
-        enabled: true
-        type: nfs
-        server: "10.0.109.29"
-        path: /volume1/Media/comics
+        existingClaim: ombi-config-v1
         globalMounts:
-          - path: /media
+          - path: /config
