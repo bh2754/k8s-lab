@@ -2,25 +2,26 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: &app tautulli
+  name: tautulli
   namespace: media
 spec:
-  interval: 15m
+  interval: 30m
   chart:
     spec:
       chart: app-template
-      version: 2.6.0
+      version: 3.3.1
       sourceRef:
         kind: HelmRepository
         name: bjw-s
         namespace: flux-system
   install:
-    createNamespace: true
     remediation:
-      retries: 5
+      retries: 3
   upgrade:
+    cleanupOnFail: true
     remediation:
-      retries: 5
+      strategy: rollback
+      retries: 3
   dependsOn:
     - name: onepassword-connect
       namespace: external-secrets
@@ -32,56 +33,78 @@ spec:
       namespace: rook-ceph
   values:
     controllers:
-      main:
-        type: deployment
+      tautulli:
         annotations:
           reloader.stakater.com/auto: "true"
-
-        pod:
-          securityContext:
-            runAsUser: 568
-            runAsGroup: 568
-            fsGroup: 568
-            fsGroupChangePolicy: "OnRootMismatch"
         containers:
-          main:
+          app:
             image:
-              repository: ghcr.io/bh2754/tautulli
-              tag: 2.14.3@sha256:fdce866cd8124ec666885aa62695ced8dfd54e21248819eaa9e328a8ebe227bf
-              pullPolicy: IfNotPresent
+              repository: ghcr.io/tautulli/tautulli
+              tag: v2.14.3@sha256:36d6a81d7d06c5aba752ce025d956a47f6008d6529f39b05ed2cf51cf22fe26b
             env:
-              TZ: "${TZ}"
+              TZ: ${TIMEZONE}
+            command: ["/usr/local/bin/python", "Tautulli.py"]
+            args: [
+              "--config", "/config/config.ini",
+              "--datadir", "/config",
+              "--port", "80"
+            ]
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /status
+                    port: &port 80
+                  initialDelaySeconds: 0
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 3
+              readiness: *probes
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: ["ALL"] }
             resources:
               requests:
-                cpu: 15m
-                memory: 105M
-                ephemeral-storage: "2Gi"
+                cpu: 10m
               limits:
-                memory: 122M
-                ephemeral-storage: "4Gi"
+                memory: 1Gi
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 568
+        runAsGroup: 568
+        fsGroup: 568
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile: { type: RuntimeDefault }
     service:
-      main:
+      app:
+        controller: tautulli
         ports:
           http:
-            port: 8181
+            port: *port
     ingress:
-      main:
-        enabled: true
-        className: "internal"
-        annotations:
-          hajimari.io/enable: "true"
-          hajimari.io/icon: "chart-box"
+      app:
+        className: internal
         hosts:
-          - host: &host "{{ .Release.Name }}.${SECRET_DOMAIN}"
+          - host: "{{ .Release.Name }}.${SECRET_DOMAIN}"
             paths:
               - path: /
                 service:
-                  name: main
+                  identifier: app
                   port: http
-        tls:
-          - hosts:
-              - *host
     persistence:
       config:
-        enabled: true
-        existingClaim: tautulli-config-v1
+        existingClaim: tautulli-config
+      cache:
+        existingClaim: tautulli-cache
+        globalMounts:
+          - path: /config/cache
+      logs:
+        type: emptyDir
+        globalMounts:
+          - path: /config/logs
+      tmp:
+        type: emptyDir
