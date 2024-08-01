@@ -6,14 +6,9 @@ resources:
   - ./namespace.yaml
   # Flux-Kustomizations
   - ./audiobookshelf/ks.yaml
-## - ./calibre-web/ks.yaml
-## - ./calibre/ks.yaml
-  - ./immich/ks.yaml
   - ./jellyfin/ks.yaml
   - ./komga/ks.yaml
   - ./ombi/ks.yaml
   - ./overseerr/ks.yaml
-# - ./stash/ks.yaml
   - ./tautulli/ks.yaml
-# - ./tdarr/ks.yaml
-# - ./ubuntu/ks.yaml
+  - ./tdarr/ks.yaml
