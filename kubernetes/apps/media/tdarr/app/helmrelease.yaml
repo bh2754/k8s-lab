@@ -100,7 +100,10 @@ spec:
                 subPath: server
       media:
         enabled: true
-        existingClaim: nfs-media
+        type: nfs
+        server: "${NFS_SERVER}"
+        path: /volume1/Media
+        readOnly: false
 #      backups:
 #        enabled: true
 #        type: custom
