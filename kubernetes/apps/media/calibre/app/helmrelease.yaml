@@ -30,7 +30,6 @@ spec:
 #    - name: volsync
 #      namespace: system
   values:
-
     controllers:
       calibre:
         containers:
@@ -79,7 +78,7 @@ spec:
         annotations:
           external-dns.alpha.kubernetes.io/target: "external.${SECRET_DOMAIN}"
         hosts:
-          - host: &host 'calibre.${EXTERNAL_DOMAIN}'
+          - host: &host 'calibre.${SECRET_DOMAIN}'
             paths:
               - path: /
                 pathType: Prefix
