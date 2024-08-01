@@ -8,7 +8,7 @@ resources:
   - ./audiobookshelf/ks.yaml
 ## - ./calibre-web/ks.yaml
 ## - ./calibre/ks.yaml
-## - ./immich/ks.yaml
+  - ./immich/ks.yaml
   - ./jellyfin/ks.yaml
   - ./komga/ks.yaml
   - ./ombi/ks.yaml
@@ -16,5 +16,4 @@ resources:
 # - ./stash/ks.yaml
   - ./tautulli/ks.yaml
 # - ./tdarr/ks.yaml
-## - ./webtop/ks.yaml
 # - ./ubuntu/ks.yaml
