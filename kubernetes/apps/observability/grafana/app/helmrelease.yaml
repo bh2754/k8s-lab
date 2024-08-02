@@ -299,7 +299,7 @@ spec:
 
     ingress:
       enabled: true
-      ingressClassName: internal-nginx
+      ingressClassName: internal
       hosts:
         - grafana.${SECRET_DOMAIN}
 
