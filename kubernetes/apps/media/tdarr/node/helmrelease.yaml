@@ -67,7 +67,6 @@ spec:
                 cpu: 2000m
                 memory: 2048Mi
               limits:
-                amd.com/gpu: 1
                 memory: 4096Mi
     # service:
     #   main:
