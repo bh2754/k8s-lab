@@ -64,7 +64,6 @@ spec:
                 containerPort: &port 8265
             resources:
               requests:
-                amd.com/gpu: 1
                 cpu: 2000m
                 memory: 2048Mi
               limits:
