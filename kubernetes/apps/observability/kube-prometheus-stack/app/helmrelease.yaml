@@ -78,7 +78,7 @@ spec:
 
       ingress:
         enabled: true
-        ingressClassName: nginx
+        ingressClassName: internal
         annotations:
           cert-manager.io/cluster-issuer: "letsencrypt-production"
           hajimari.io/enable: "true"
@@ -164,7 +164,7 @@ spec:
     prometheus:
       ingress:
         enabled: true
-        ingressClassName: nginx
+        ingressClassName: internal
         annotations:
           cert-manager.io/cluster-issuer: letsencrypt-production
           hajimari.io/appName: "Prometheus"
@@ -183,7 +183,7 @@ spec:
       thanosIngress:
         enabled: true
         pathType: Prefix
-        ingressClassName: nginx
+        ingressClassName: internal
         annotations:
           cert-manager.io/cluster-issuer: letsencrypt-production
           nginx.ingress.kubernetes.io/ssl-redirect: "true"
