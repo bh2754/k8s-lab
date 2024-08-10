@@ -1,5 +1,5 @@
 ---
-apiVersion: helm.toolkit.fluxcd.io/v2beta1
+apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: kube-prometheus-stack
@@ -11,7 +11,7 @@ spec:
   chart:
     spec:
       chart: kube-prometheus-stack
-      version: 49.2.0
+      version: 61.7.2
       sourceRef:
         kind: HelmRepository
         name: prometheus-community
@@ -201,7 +201,7 @@ spec:
         externalLabels:
           cluster: home-ops
         thanos:
-          image: quay.io/thanos/thanos:v0.32.1
+          image: quay.io/thanos/thanos:v0.36.0
           # renovate: datasource=docker depName=quay.io/thanos/thanos
           version: "v0.29.0"
         podAntiAffinity: hard
