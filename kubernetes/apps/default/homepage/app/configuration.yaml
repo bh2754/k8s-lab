@@ -4,7 +4,7 @@ kind: ConfigMap
 metadata:
   name: homepage-config
 data:
-  settings.yaml: |
+  settings.yaml:
     title: Homelab
 #    theme: dark
 #    color: slate
