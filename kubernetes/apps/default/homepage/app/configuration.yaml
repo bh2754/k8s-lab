@@ -25,7 +25,7 @@ data:
             description: Movies Management
             widget:
               type: radarr
-              url: http://radarr.default.svc.cluster.local:7878
+              url: http://radarr.organizers.svc.cluster.local:7878
               key: {{HOMEPAGE_VAR_RADARR_KEY}}
   settings.yaml: |
     ---
