@@ -2,19 +2,19 @@
 apiVersion: external-secrets.io/v1beta1
 kind: ExternalSecret
 metadata:
-  name: tautulli-restic
+  name: tdarr-config-restic
   namespace: media
 spec:
   secretStoreRef:
     kind: ClusterSecretStore
     name: onepassword-connect
   target:
-    name: tautulli-restic-secret
+    name: tdarr-config-restic-secret
     creationPolicy: Owner
     template:
       engineVersion: v2
       data:
-        RESTIC_REPOSITORY: '{{ .REPOSITORY_TEMPLATE }}/tautulli-lab'
+        RESTIC_REPOSITORY: '{{ .REPOSITORY_TEMPLATE }}/tdarr-config-lab'
         RESTIC_PASSWORD: '{{ .RESTIC_PASSWORD }}'
         AWS_ACCESS_KEY_ID: '{{ .AWS_ACCESS_KEY_ID }}'
         AWS_SECRET_ACCESS_KEY: '{{ .AWS_SECRET_ACCESS_KEY }}'
@@ -25,17 +25,17 @@ spec:
 apiVersion: volsync.backube/v1alpha1
 kind: ReplicationSource
 metadata:
-  name: tautulli
+  name: tdarr-config
   namespace: media
 spec:
-  sourcePVC: tautulli-config-v1
+  sourcePVC: tdarr-config-v1
   trigger:
     schedule: "0 0 * * *"
   restic:
     copyMethod: Snapshot
-    pruneIntervalDays: 10
-    repository: tautulli-restic-secret
-    cacheCapacity: 2Gi
+    pruneIntervalDays: 5
+    repository: tdarr-config-restic-secret
+    cacheCapacity: 50Gi
     volumeSnapshotClassName: csi-ceph-blockpool
     storageClassName: ceph-block
     cacheStorageClassName: ceph-block
@@ -44,5 +44,5 @@ spec:
       runAsGroup: 568
       fsGroup: 568
     retain:
-      daily: 10
+      daily: 5
       within: 3d
