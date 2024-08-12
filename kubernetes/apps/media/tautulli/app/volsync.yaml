@@ -28,7 +28,7 @@ metadata:
   name: tautulli
   namespace: media
 spec:
-  sourcePVC: tautulli-config-v1
+  sourcePVC: tautulli-config
   trigger:
     schedule: "0 0 * * *"
   restic:

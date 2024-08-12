@@ -28,7 +28,7 @@ metadata:
   name: komga
   namespace: media
 spec:
-  sourcePVC: komga-config-v1
+  sourcePVC: komga-config
   trigger:
     schedule: "0 0 * * *"
   restic:

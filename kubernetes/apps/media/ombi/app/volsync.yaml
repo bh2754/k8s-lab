@@ -28,7 +28,7 @@ metadata:
   name: ombi
   namespace: media
 spec:
-  sourcePVC: ombi-config-v1
+  sourcePVC: ombi-config
   trigger:
     schedule: "0 0 * * *"
   restic:

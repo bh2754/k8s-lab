@@ -28,7 +28,7 @@ metadata:
   name: tdarr-config
   namespace: media
 spec:
-  sourcePVC: tdarr-config-v1
+  sourcePVC: tdarr-config
   trigger:
     schedule: "0 0 * * *"
   restic:
