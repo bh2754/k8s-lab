@@ -35,6 +35,7 @@ spec:
     copyMethod: Snapshot
     pruneIntervalDays: 10
     repository: overseerr-restic-secret
+    volumeSnapshotClassName: csi-ceph-blockpool
     moverSecurityContext:
       runAsUser: 568
       runAsGroup: 568
