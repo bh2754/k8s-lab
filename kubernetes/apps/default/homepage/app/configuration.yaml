@@ -86,7 +86,7 @@ data:
              href: https://adguard.${SECRET_DOMAIN_CO}:8443
              widget:
                type: adguard
-               url: https://adguard.${SECRET_DOMAIN}
+               url: https://adguard.${SECRET_DOMAIN_CO}:8443
                username: {{HOMEPAGE_VAR_ADGUARD_USERNAME}}
                password: {{HOMEPAGE_VAR_ADGUARD_PASSWORD}}
 #        - Authentik:
@@ -159,15 +159,15 @@ data:
         #    icon: rook.png
 
     - Media:
-        - Overseerr:
-            href: https://overseerr.{{HOMEPAGE_VAR_SECRET_DOMAIN_NAME}}
-            siteMonitor: https://overseerr.{{HOMEPAGE_VAR_SECRET_DOMAIN_NAME}}
-            icon: overseerr.png
-            description: Media Requests
-            widget:
-              type: overseerr
-              url: http://overseerr.media.svc.cluster.local
-              key: {{HOMEPAGE_VAR_OVERSEERR_TOKEN}}
+#        - Overseerr:
+#            href: https://overseerr.{{HOMEPAGE_VAR_SECRET_DOMAIN_NAME}}
+#            siteMonitor: https://overseerr.{{HOMEPAGE_VAR_SECRET_DOMAIN_NAME}}
+#            icon: overseerr.png
+#            description: Media Requests
+#            widget:
+#              type: overseerr
+#              url: http://overseerr.media.svc.cluster.local
+#              key: {{HOMEPAGE_VAR_OVERSEERR_TOKEN}}
         #- Plex:
         #    href: https://plex.{{HOMEPAGE_VAR_SECRET_DOMAIN_NAME}}
         #    siteMonitor: https://plex.{{HOMEPAGE_VAR_SECRET_DOMAIN_NAME}}
@@ -178,31 +178,31 @@ data:
         #      url: https://plex.{{HOMEPAGE_VAR_SECRET_DOMAIN_NAME}}
         #      key: {{HOMEPAGE_VAR_PLEX_TOKEN}}
         - Sonarr:
-            href: https://sonarr.{{HOMEPAGE_VAR_SECRET_DOMAIN_NAME}}
-            siteMonitor: https://sonarr.{{HOMEPAGE_VAR_SECRET_DOMAIN_NAME}}
+            href: https://sonarr.${SECRET_DOMAIN}
+            siteMonitor: https://sonarr.${SECRET_DOMAIN}
             icon: sonarr.png
             description: TV Shows
             widget:
               type: sonarr
-              url: http://sonarr.media.svc.cluster.local:8989
+              url: http://sonarr.organizers.svc.cluster.local:8989
               key: {{HOMEPAGE_VAR_SONARR_TOKEN}}
         - Radarr:
-            href: https://radarr.{{HOMEPAGE_VAR_SECRET_DOMAIN_NAME}}
-            siteMonitor: https://radarr.{{HOMEPAGE_VAR_SECRET_DOMAIN_NAME}}
+            href: https://radarr.${SECRET_DOMAIN}
+            siteMonitor: https://radarr.${SECRET_DOMAIN}
             icon: radarr.png
             description: Movies
             widget:
               type: radarr
-              url: http://radarr.media.svc.cluster.local:7878
+              url: http://radarr.organizers.svc.cluster.local:7878
               key: {{HOMEPAGE_VAR_RADARR_TOKEN}}
         - Lidarr:
-            href: https://lidarr.{{HOMEPAGE_VAR_SECRET_DOMAIN_NAME}}
-            siteMonitor: https://lidarr.{{HOMEPAGE_VAR_SECRET_DOMAIN_NAME}}
+            href: https://lidarr.${SECRET_DOMAIN}
+            siteMonitor: https://lidarr.${SECRET_DOMAIN}
             icon: lidarr.png
             description: Music
             widget:
               type: lidarr
-              url: http://lidarr.media.svc.cluster.local:8686
+              url: http://lidarr.organizers.svc.cluster.local:8686
               key: {{HOMEPAGE_VAR_LIDARR_TOKEN}}
         # - Navidrome:
         #     href: https://music.{{HOMEPAGE_VAR_SECRET_DOMAIN_NAME}}
@@ -217,13 +217,13 @@ data:
         #       salt: {{HOMEPAGE_VAR_NAVIDROME_SALT}}
 
         - Sabnzbd:
-            href: https://sabnzbd.{{HOMEPAGE_VAR_SECRET_DOMAIN_NAME}}
-            siteMonitor: https://sabnzbd.{{HOMEPAGE_VAR_SECRET_DOMAIN_NAME}}
+            href: https://sabnzbd.${SECRET_DOMAIN}
+            siteMonitor: https://sabnzbd.${SECRET_DOMAIN}
             icon: sabnzbd.png
             description: NZB Downloader
             widget:
               type: sabnzbd
-              url: http://sabnzbd.media.svc.cluster.local:8080
+              url: http://sabnzbd.downloaders.svc.cluster.local:8080
               key: {{HOMEPAGE_VAR_SABNZBD_TOKEN}}
 
     - Calendar:
@@ -254,7 +254,7 @@ data:
         - Google Calendar:
             - icon: google-calendar.png
               href: 'https://calendar.google.com'
-    - Media Links:
+    - MediaLinks:
         - YouTube:
             - icon: youtube.png
               href: 'https://youtube.com/feed/subscriptions'
@@ -270,7 +270,7 @@ data:
               href: 'https://kubesearch.dev/'
         - home-ops:
             - icon: github.png
-              href: 'https://github.com/szinn/k8s-homelab'
+              href: 'https://github.com/bh2754/k8s-lab'
 
   docker.yaml: ""
 
