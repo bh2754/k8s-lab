@@ -10,34 +10,34 @@ data:
 #    color: slate
 #    headerStyle: clean
 #    statusStyle: dot
-    useEqualHeights: false
-    fiveColumns: true
-    quicklaunch:
-      searchDescriptions: true
-      hideInternetSearch: true
-      showSearchSuggestions: true
-      hideVisitURL: true
+#    useEqualHeights: false
+#    fiveColumns: true
+#    quicklaunch:
+#      searchDescriptions: true
+#      hideInternetSearch: true
+#      showSearchSuggestions: true
+#      hideVisitURL: true
     layout:
-      Calendar:
-        style: column
-        icon: mdi-calendar
-        initiallyCollapsed: false
-      Administration:
-        style: column
-        columns: 5
-        icon: mdi-network
-      Monitoring:
-        style: column
-        columns: 5
-        icon: grafana.png
-      Storage:
-        style: column
-        columns: 5
-        icon: synology.png
-      Media:
-        style: column
-        columns: 5
-        icon: mdi-download-circle
+#      Calendar:
+#        style: column
+#        icon: mdi-calendar
+#        initiallyCollapsed: false
+#      Administration:
+#        style: column
+#        columns: 5
+#        icon: mdi-network
+#      Monitoring:
+#        style: column
+#        columns: 5
+#        icon: grafana.png
+#      Storage:
+#        style: column
+#        columns: 5
+#        icon: synology.png
+#      Media:
+#        style: column
+#        columns: 5
+#        icon: mdi-download-circle
 
   widgets.yaml: |
     # - logo:
