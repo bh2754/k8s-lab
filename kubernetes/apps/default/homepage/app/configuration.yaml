@@ -6,10 +6,10 @@ metadata:
 data:
   settings.yaml: |
     title: Homelab
-    theme: dark
-    color: slate
-    headerStyle: clean
-    statusStyle: dot
+#    theme: dark
+#    color: slate
+#    headerStyle: clean
+#    statusStyle: dot
     useEqualHeights: false
     fiveColumns: true
     quicklaunch:
