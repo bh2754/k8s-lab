@@ -28,7 +28,7 @@ nodes:
     controlPlane: true
     networkInterfaces:
       - deviceSelector:
-          hardwareAddr: "00:50:56:b6:ba:2a"
+          hardwareAddr: "00:50:56:b6:54:3e"
         dhcp: false
         addresses:
           - "10.0.112.11/24"
@@ -45,7 +45,7 @@ nodes:
     controlPlane: true
     networkInterfaces:
       - deviceSelector:
-          hardwareAddr: "00:50:56:b6:d8:52"
+          hardwareAddr: "00:50:56:b6:34:39"
         dhcp: false
         addresses:
           - "10.0.112.12/24"
@@ -62,7 +62,7 @@ nodes:
     controlPlane: true
     networkInterfaces:
       - deviceSelector:
-          hardwareAddr: "00:50:56:b6:1d:8b"
+          hardwareAddr: "00:50:56:b6:62:21"
         dhcp: false
         addresses:
           - "10.0.112.13/24"
@@ -75,6 +75,36 @@ nodes:
 
 # Global patches
 patches:
+  - # Force nameserver
+    |-
+    machine:
+      network:
+        nameservers:
+          - 1
+          - 9
+          - 2
+          - .
+          - 1
+          - 6
+          - 8
+          - .
+          - 6
+          - 0
+          - .
+          - 1
+          - ,
+          - 1
+          - 9
+          - 2
+          - .
+          - 1
+          - 6
+          - 8
+          - .
+          - 6
+          - 0
+          - .
+          - 2
   - "@./patches/global/cluster-discovery.yaml"
   - "@./patches/global/containerd.yaml"
   - "@./patches/global/disable-search-domain.yaml"
