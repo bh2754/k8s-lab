@@ -67,15 +67,6 @@ spec:
           - name: master3
             devices:
               - name: "/dev/sdb"
-          - name: k8s-worker1
-            devices:
-              - name: "/dev/sdb"
-          - name: k8s-worker2
-            devices:
-              - name: "/dev/sdb"
-          - name: k8s-worker3
-            devices:
-              - name: "/dev/sdb"
     cephBlockPools:
       - name: ceph-blockpool
         spec:
