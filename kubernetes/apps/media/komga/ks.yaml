@@ -8,6 +8,10 @@ metadata:
     substitution.flux.home.arpa/enabled: "true"
 spec:
   path: ./kubernetes/apps/media/komga/app
+  dependsOn:
+    - name: rook-ceph-cluster
+    - name: onepassword-connect
+    - name: volsync
   prune: true
   sourceRef:
     kind: GitRepository

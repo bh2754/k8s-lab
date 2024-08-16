@@ -11,6 +11,7 @@ spec:
     - name: onepassword-connect
     - name: pod-gateway
     - name: rook-ceph-cluster
+    - name: volsync
   path: ./kubernetes/apps/organizers/lidarr/app
   prune: true
   sourceRef:

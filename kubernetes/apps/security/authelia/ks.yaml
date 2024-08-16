@@ -9,6 +9,11 @@ metadata:
 spec:
   path: ./kubernetes/apps/security/authelia/app
   prune: true
+  dependsOn:
+    - name: onepassword-connect
+    - name: rook-ceph-cluster
+    - name: cloudnative-pg-cluster
+    - name: redis
   sourceRef:
     kind: GitRepository
     name: home-kubernetes

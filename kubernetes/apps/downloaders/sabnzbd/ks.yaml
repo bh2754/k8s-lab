@@ -11,6 +11,7 @@ spec:
     - name: rook-ceph-cluster
     - name: onepassword-connect
     - name: pod-gateway
+    - name: volsync
   path: ./kubernetes/apps/downloaders/sabnzbd/app
   prune: true
   sourceRef:

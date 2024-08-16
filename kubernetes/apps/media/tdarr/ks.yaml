@@ -11,6 +11,10 @@ spec:
       app.kubernetes.io/name: tdarr
   path: "./kubernetes/apps/media/tdarr/app"
   prune: true
+  dependsOn:
+    - name: rook-ceph-cluster
+    - name: onepassword-connect
+    - name: volsync
   sourceRef:
     kind: GitRepository
     name: home-kubernetes
@@ -31,6 +35,9 @@ spec:
       app.kubernetes.io/name: tdarr-node
   path: "./kubernetes/apps/media/tdarr/node"
   prune: true
+  dependsOn:
+    - name: rook-ceph-cluster
+    - name: tdarr
   sourceRef:
     kind: GitRepository
     name: home-kubernetes

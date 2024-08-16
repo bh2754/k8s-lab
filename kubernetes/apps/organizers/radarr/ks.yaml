@@ -12,6 +12,7 @@ spec:
     - name: onepassword-connect
     - name: pod-gateway
     - name: rook-ceph-cluster
+    - name: volsync
   path: ./kubernetes/apps/organizers/radarr/app
   prune: true
   sourceRef:

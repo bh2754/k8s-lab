@@ -9,6 +9,10 @@ metadata:
 spec:
   interval: 10m
   path: "./kubernetes/apps/media/overseerr/app"
+  dependsOn:
+    - name: rook-ceph-cluster
+    - name: onepassword-connect
+    - name: volsync
   prune: true
   sourceRef:
     kind: GitRepository

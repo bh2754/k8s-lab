@@ -13,6 +13,9 @@ spec:
     - name: external-secrets
   path: ./kubernetes/apps/observability/kube-prometheus-stack/app
   prune: true
+  dependsOn:
+    - name: onepassword-connect
+    - name: rook-ceph-cluster
   sourceRef:
     kind: GitRepository
     name: home-kubernetes

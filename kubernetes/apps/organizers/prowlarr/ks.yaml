@@ -7,6 +7,11 @@ metadata:
   labels:
     substitution.flux.home.arpa/enabled: "true"
 spec:
+  dependsOn:
+    - name: rook-ceph-cluster
+    - name: onepassword-connect
+    - name: pod-gateway
+    - name: volsync
   path: ./kubernetes/apps/organizers/prowlarr/app
   prune: true
   sourceRef:

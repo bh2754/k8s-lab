@@ -11,6 +11,9 @@ spec:
       app.kubernetes.io/name: *app
   path: ./kubernetes/apps/observability/grafana/app
   prune: true
+  dependsOn:
+    - name: onepassword-connect
+    - name: rook-ceph-cluster
   sourceRef:
     kind: GitRepository
     name: home-kubernetes

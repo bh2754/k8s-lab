@@ -9,6 +9,10 @@ metadata:
 spec:
   path: ./kubernetes/apps/media/ombi/app
   prune: true
+  dependsOn:
+    - name: rook-ceph-cluster
+    - name: onepassword-connect
+    - name: volsync
   sourceRef:
     kind: GitRepository
     name: home-kubernetes

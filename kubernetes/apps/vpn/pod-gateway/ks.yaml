@@ -9,6 +9,8 @@ metadata:
 spec:
   path: ./kubernetes/apps/vpn/pod-gateway/app
   prune: true
+  dependsOn:
+    - name: onepassword-connect
   sourceRef:
     kind: GitRepository
     name: home-kubernetes
