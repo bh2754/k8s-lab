@@ -1,0 +1,154 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app authelia
+  namespace: security
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: app-template
+      version: 3.3.2
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s
+        namespace: flux-system
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      strategy: rollback
+      retries: 3
+  values:
+    controllers:
+      authelia:
+        replicas: 3
+        strategy: RollingUpdate
+        annotations:
+          reloader.stakater.com/auto: "true"
+        initContainers:
+          init-db:
+            image:
+              repository: ghcr.io/onedr0p/postgres-init
+              tag: 16
+            envFrom:
+              - secretRef:
+                  name: authelia-secret
+        containers:
+          app:
+            image:
+              repository: ghcr.io/authelia/authelia
+              tag: 4.38.10@sha256:1af32be812f041c1f3a91190faf9a022e586b185251d26a29bcdf7982bcb3bc7
+            env:
+              AUTHELIA_AUTHENTICATION_BACKEND_LDAP_BASE_DN: dc=bharris,dc=co
+              AUTHELIA_AUTHENTICATION_BACKEND_LDAP_DISPLAY_NAME_ATTRIBUTE: givenName
+              AUTHELIA_AUTHENTICATION_BACKEND_LDAP_GROUPS_FILTER: "(&(member:1.2.840.113556.1.4.1941:={dn})(objectClass=group)(objectCategory=group))"
+              AUTHELIA_AUTHENTICATION_BACKEND_LDAP_GROUP_NAME_ATTRIBUTE: cn
+              AUTHELIA_AUTHENTICATION_BACKEND_LDAP_MAIL_ATTRIBUTE: mail
+              AUTHELIA_AUTHENTICATION_BACKEND_LDAP_URL: "ldap://10.0.103.10:389"
+              AUTHELIA_AUTHENTICATION_BACKEND_LDAP_USER: CN=Administrator,CN=Users,DC=bharris,DC=co
+              AUTHELIA_AUTHENTICATION_BACKEND_LDAP_USERNAME_ATTRIBUTE: sAMAccountName
+              AUTHELIA_AUTHENTICATION_BACKEND_LDAP_USERS_FILTER: "(&(|({username_attribute}={input})({mail_attribute}={input}))(objectCategory=person)(objectClass=user)(!userAccountControl:1.2.840.113556.1.4.803:=2)(!pwdLastSet=0))"
+              AUTHELIA_AUTHENTICATION_BACKEND_PASSWORD_RESET_DISABLE: "false"
+              AUTHELIA_AUTHENTICATION_BACKEND_LDAP_IMPLEMENTATION: activedirectory
+              AUTHELIA_AUTHENTICATION_BACKEND_LDAP_TLS_SKIP_VERIFY: "true"
+              AUTHELIA_AUTHENTICATION_BACKEND_LDAP_TLS_MINIMUM_VERSION: TLS1.2
+              AUTHELIA_AUTHENTICATION_BACKEND_LDAP_START_TLS: "false"
+              AUTHELIA_DEFAULT_REDIRECTION_URL: "https://auth.${SECRET_DOMAIN}"
+              AUTHELIA_DUO_API_DISABLE: "true"
+              AUTHELIA_LOG_LEVEL: debug
+              AUTHELIA_NOTIFIER_SMTP_DISABLE_REQUIRE_TLS: "true"
+              AUTHELIA_NOTIFIER_SMTP_HOST: smtp.gmail.com
+              AUTHELIA_NOTIFIER_SMTP_PORT: 587
+              AUTHELIA_NOTIFIER_SMTP_SENDER: ${AUTHELIA_SENDER}
+              AUTHELIA_NOTIFIER_SMTP_USERNAME: bh2754@gmail.com
+              AUTHELIA_SERVER_DISABLE_HEALTHCHECK: "true"
+              AUTHELIA_SERVER_PORT: 80
+              AUTHELIA_SESSION_DOMAIN: "${SECRET_DOMAIN}"
+              AUTHELIA_SESSION_REDIS_HOST: redis.databases.svc.cluster.local
+              AUTHELIA_SESSION_REDIS_PORT: 6379
+              AUTHELIA_STORAGE_POSTGRES_DATABASE: authelia
+              AUTHELIA_STORAGE_POSTGRES_HOST: postgres1-rw.databases.svc
+              AUTHELIA_TELEMETRY_METRICS_ADDRESS: "tcp://0.0.0.0:8080"
+              AUTHELIA_TELEMETRY_METRICS_ENABLED: "true"
+              AUTHELIA_THEME: dark
+              AUTHELIA_TOTP_ISSUER: authelia.com
+              AUTHELIA_WEBAUTHN_DISABLE: "false"
+            envFrom:
+              - secretRef:
+                  name: authelia-secret
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /api/health
+                    port: &port 80
+                  initialDelaySeconds: 0
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 3
+              readiness: *probes
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: { drop: ["ALL"] }
+            resources:
+              requests:
+                cpu: 10m
+              limits:
+                memory: 128Mi
+        pod:
+          securityContext:
+            runAsUser: 568
+            runAsGroup: 568
+            runAsNonRoot: true
+          topologySpreadConstraints:
+            - maxSkew: 1
+              topologyKey: kubernetes.io/hostname
+              whenUnsatisfiable: DoNotSchedule
+              labelSelector:
+                matchLabels:
+                  app.kubernetes.io/name: *app
+    service:
+      app:
+        controller: authelia
+        ports:
+          http:
+            port: *port
+          metrics:
+            port: 8080
+    serviceMonitor:
+      app:
+        serviceName: authelia
+        endpoints:
+          - port: metrics
+            scheme: http
+            path: /metrics
+            interval: 1m
+            scrapeTimeout: 10s
+    ingress:
+      main:
+        enabled: true
+        className: external
+        annotations:
+          external-dns.alpha.kubernetes.io/target: external.${SECRET_DOMAIN}
+        hosts:
+          - host: &host auth.${SECRET_DOMAIN}
+            paths:
+              - path: /
+                service:
+                  identifier: app
+                  port: http
+        tls:
+          - hosts: [*host]
+    persistence:
+      config:
+        type: configMap
+        name: authelia-configmap
+        globalMounts:
+          - path: /config
