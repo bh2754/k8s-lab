@@ -24,7 +24,7 @@ spec:
   dependsOn:
     - name: onepassword-connect
       namespace: external-secrets
-    - name: ingress-nginx-external
+    - name: ingress-nginx-internal
       namespace: network
     - name: rook-ceph-cluster
       namespace: rook-ceph
