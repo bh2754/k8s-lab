@@ -40,7 +40,7 @@ spec:
           app:
             image:
               repository: ghcr.io/tautulli/tautulli
-              tag: v2.14.4@sha256:4316ed82bd1334852c56460d0dc2c3ff4fc84ac55e71944bcb0f27838ed7a53e
+              tag: v2.15.1@sha256:7755360de25d5b60aaf67a0aa4f1f71fb4fc12a1a668bb9ced09e9f4ab5239cd
             env:
               TZ: ${TIMEZONE}
             command: ["/usr/local/bin/python", "Tautulli.py"]
